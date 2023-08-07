@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strconv"
+	"strings"
 )
 
 var operation []rune = []rune{'+', '-', '*', '/'}
@@ -82,6 +85,7 @@ func calculate(fnum, snum int, oper rune) int {
 }
 
 func parseInput(exc string) (int, string) {
+	exc = strings.ReplaceAll(exc, " ", "")
 	var fnum string
 	var snum string
 	var oper rune
@@ -93,9 +97,9 @@ func parseInput(exc string) (int, string) {
 		if isHas(operation, rune(exc[i])) {
 			oper += rune(exc[i])
 			parts = true
-		} else if parts {
+		} else if parts && string(exc[i]) != " " {
 			snum += string(exc[i])
-		} else {
+		} else if string(exc[i]) != " " {
 			fnum += string(exc[i])
 		}
 	}
@@ -127,7 +131,21 @@ func parseInput(exc string) (int, string) {
 }
 
 func main() {
-	fmt.Println(arabicToRome(1))
-	fmt.Println(romeToArabic("IV"))
-	fmt.Println(parseInput("I-II"))
+	// fmt.Println(arabicToRome(1))
+	// fmt.Println(romeToArabic("IV"))
+	// fmt.Println(parseInput("I-II"))
+
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Println("Введите значение: ")
+		text, _ := reader.ReadString('\n')
+		//text_space := strings.TrimSpace(text)
+		num, str := parseInput(text)
+		if str != "" {
+			fmt.Println(str)
+		} else {
+			fmt.Println(num)
+		}
+	}
 }
