@@ -88,6 +88,7 @@ func parseInput(exc string) (int, string) {
 	parts := false
 	var error string
 
+	//Разбиваю выражение на разные части
 	for i := 0; i < len(exc); i++ {
 		if isHas(operation, rune(exc[i])) {
 			oper += rune(exc[i])
@@ -103,13 +104,19 @@ func parseInput(exc string) (int, string) {
 		return 0, error
 	}
 
+	//Преобразую в int, если не получится пробую считать в римской си
 	fn, ferr := strconv.Atoi(fnum)
 	sn, serr := strconv.Atoi(snum)
 
-	if ferr != nil && serr != nil {
+	if ferr != nil || serr != nil {
 		if isRome(fnum) && isRome(snum) {
 			result := calculate(romeToArabic(fnum), romeToArabic(snum), oper)
-			return 0, arabicToRome(result)
+			if result > 0 {
+				return 0, arabicToRome(result)
+			} else {
+				return 0, "Римляне отрицали цифры меньше 1"
+			}
+
 		} else {
 			error = "Вывод ошибки, так как используются одновременно разные системы счисления."
 			return 0, error
@@ -122,5 +129,5 @@ func parseInput(exc string) (int, string) {
 func main() {
 	fmt.Println(arabicToRome(1))
 	fmt.Println(romeToArabic("IV"))
-	fmt.Println(parseInput("1-2"))
+	fmt.Println(parseInput("I-II"))
 }
