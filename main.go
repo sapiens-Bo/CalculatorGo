@@ -85,7 +85,6 @@ func calculate(fnum, snum int, oper rune) int {
 }
 
 func parseInput(exc string) (int, string) {
-	exc = strings.ReplaceAll(exc, " ", "")
 	var fnum string
 	var snum string
 	var oper rune
@@ -97,13 +96,15 @@ func parseInput(exc string) (int, string) {
 		if isHas(operation, rune(exc[i])) {
 			oper += rune(exc[i])
 			parts = true
-		} else if parts && string(exc[i]) != " " {
+		} else if parts {
 			snum += string(exc[i])
-		} else if string(exc[i]) != " " {
+		} else {
 			fnum += string(exc[i])
 		}
+		fnum = strings.TrimSpace(fnum)
+		snum = strings.TrimSpace(snum)
 	}
-	if !parts {
+	if !parts || snum == "" || fnum == "" {
 		error := "Вывод ошибки, так как строка не является математической операцией"
 		return 0, error
 	}
