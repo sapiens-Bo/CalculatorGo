@@ -1,8 +1,31 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
-var operation [4]string = [4]string{"+", "-", "*", "/"}
+var operation []rune = []rune{'+', '-', '*', '/'}
+
+func isHas(array []rune, element rune) bool {
+	for i := 0; i < len(array); i++ {
+		if array[i] == element {
+			return true
+		}
+	}
+
+	return false
+}
+
+func isRome(rome string) bool {
+	romes := []rune{'I', 'V', 'X', 'L', 'C', 'D', 'M'}
+	for i := 0; i < len(rome); i++ {
+		if !isHas(romes, rune(rome[i])) {
+			return false
+		}
+	}
+	return true
+}
 
 func arabicToRome(num int) string {
 	ones := [10]string{"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"}
@@ -29,13 +52,6 @@ func romeToArabic(num string) int {
 		'C': 100,
 		'D': 500,
 		'M': 1000,
-		// "I" : 1,
-		// "V" : 5,
-		// "X" : 10,
-		// "L" : 50,
-		// "C" : 100,
-		// "D" : 500,
-		// "M" : 1000,
 	}
 
 	var result int
@@ -50,7 +66,61 @@ func romeToArabic(num string) int {
 	return result
 }
 
+func calculate(fnum, snum int, oper rune) int {
+	var result int
+	if oper == '*' {
+		result = fnum * snum
+	} else if oper == '/' {
+		result = fnum / snum
+	} else if oper == '+' {
+		result = fnum + snum
+	} else if oper == '-' {
+		result = fnum - snum
+	}
+
+	return result
+}
+
+func parseInput(exc string) (int, string) {
+	var fnum string
+	var snum string
+	var oper rune
+	parts := false
+	var error string
+
+	for i := 0; i < len(exc); i++ {
+		if isHas(operation, rune(exc[i])) {
+			oper += rune(exc[i])
+			parts = true
+		} else if parts {
+			snum += string(exc[i])
+		} else {
+			fnum += string(exc[i])
+		}
+	}
+	if !parts {
+		error := "Вывод ошибки, так как строка не является математической операцией"
+		return 0, error
+	}
+
+	fn, ferr := strconv.Atoi(fnum)
+	sn, serr := strconv.Atoi(snum)
+
+	if ferr != nil && serr != nil {
+		if isRome(fnum) && isRome(snum) {
+			result := calculate(romeToArabic(fnum), romeToArabic(snum), oper)
+			return 0, arabicToRome(result)
+		} else {
+			error = "Вывод ошибки, так как используются одновременно разные системы счисления."
+			return 0, error
+		}
+	}
+
+	return calculate(fn, sn, oper), error
+}
+
 func main() {
 	fmt.Println(arabicToRome(1))
 	fmt.Println(romeToArabic("IV"))
+	fmt.Println(parseInput("1-2"))
 }
