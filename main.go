@@ -1,3 +1,10 @@
+// - Работает с двумя операндами и одной операцией.(+, -, *, /)
+// - Работает с двумя системами счисления. Арабская и Римская СИ.
+// - Одна СИ в одном выражении иначе указать на ошибку и прекратить работу
+// - Результат деления является целое число, остаток отбрасывается
+// - Результат работы с арабскими числами мб отрицательные числа и 0
+// - Результат работы с римскими числами только положительные числа, иначе ошибка и прекратить работу
+
 package main
 
 import (
@@ -69,15 +76,15 @@ func romeToArabic(num string) int {
 	return result
 }
 
-func calculate(fnum, snum int, oper rune) int {
+func calculate(fnum, snum int, oper string) int {
 	var result int
-	if oper == '*' {
+	if oper == "*" {
 		result = fnum * snum
-	} else if oper == '/' {
+	} else if oper == "/" {
 		result = fnum / snum
-	} else if oper == '+' {
+	} else if oper == "+" {
 		result = fnum + snum
-	} else if oper == '-' {
+	} else if oper == "-" {
 		result = fnum - snum
 	}
 
@@ -87,14 +94,14 @@ func calculate(fnum, snum int, oper rune) int {
 func parseInput(exc string) (int, string) {
 	var fnum string
 	var snum string
-	var oper rune
+	var oper string
 	parts := false
 	var error string
 
 	//Разбиваю выражение на разные части
 	for i := 0; i < len(exc); i++ {
 		if isHas(operation, rune(exc[i])) {
-			oper += rune(exc[i])
+			oper += string(exc[i])
 			parts = true
 		} else if parts {
 			snum += string(exc[i])
@@ -107,6 +114,8 @@ func parseInput(exc string) (int, string) {
 	if !parts || snum == "" || fnum == "" {
 		error := "Вывод ошибки, так как строка не является математической операцией"
 		return 0, error
+	} else if len(oper) > 1 {
+		return 0, "Вывод ошибки, так как формат математической операции не удовлетворяет заданию — два операнда и один оператор (+, -, /, *)."
 	}
 
 	//Преобразую в int, если не получится пробую считать в римской си
@@ -119,7 +128,7 @@ func parseInput(exc string) (int, string) {
 			if result > 0 {
 				return 0, arabicToRome(result)
 			} else {
-				return 0, "Римляне отрицали цифры меньше 1"
+				return 0, "Вывод ошибки, так как в римской системе нет отрицательных чисел."
 			}
 
 		} else {
@@ -141,7 +150,6 @@ func main() {
 	for {
 		fmt.Println("Введите значение: ")
 		text, _ := reader.ReadString('\n')
-		//text_space := strings.TrimSpace(text)
 		num, str := parseInput(text)
 		if str != "" {
 			fmt.Println(str)
